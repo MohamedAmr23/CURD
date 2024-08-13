@@ -1,6 +1,8 @@
 const express = require('express')
+const cors = require('cors')
 const app = express()
 const port = 2000
+app.use(cors())
 app.use(express.json())
 
 const mysql=require('mysql2')
@@ -29,7 +31,7 @@ app.get('/products',(req,res)=>{
 })
 
 // get single product
-app.get('/product/:id',(req,res)=>{
+app.get('/products/:id',(req,res)=>{
     const{id}=req.params
     query.execute(`SELECT * from products WHERE id=${id}`,(err,data)=>{
         if(err){
@@ -41,9 +43,16 @@ app.get('/product/:id',(req,res)=>{
 })
 
 //delete product
-app.delete('/product',(req,res)=>{
+app.delete('/products',(req,res)=>{
     const {id}=req.body
     query.execute(`DELETE FROM products WHERE id=${id}`)
     res.json({message:"success"})
 }) 
+
+// update product
+app.put('/products',(req,res)=>{
+    const {id,name,price,description}=req.body
+    query.execute(`UPDATE products SET name='${name}',price='${price}',describtion='${description}' WHERE id=${id}`)
+    res.json({message:"success"})
+})
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
